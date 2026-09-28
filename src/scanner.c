@@ -1,0 +1,19 @@
+#include "tree_sitter/parser.h"
+
+enum TokenType { HEAD, TAIL };
+
+void *tree_sitter_column_external_scanner_create(void) { return NULL; }
+
+void tree_sitter_column_external_scanner_destroy(void *payload) {}
+
+unsigned tree_sitter_column_external_scanner_serialize(void *payload, char *buffer) { return 0; }
+
+void tree_sitter_column_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) {}
+
+// `x` is a `head` at the start of a line and a `tail` anywhere else.
+bool tree_sitter_column_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) {
+  if (lexer->lookahead != 'x') return false;
+  lexer->result_symbol = lexer->get_column(lexer) == 0 ? HEAD : TAIL;
+  lexer->advance(lexer, false);
+  return true;
+}
